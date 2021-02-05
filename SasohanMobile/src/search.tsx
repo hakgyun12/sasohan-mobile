@@ -1,13 +1,6 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-import 'react-native-gesture-handler';
-import React, {Component} from 'react';
-import {View, Text, Button} from 'react-native';
+import React, { Component } from 'react';
+import { Text, View } from 'react-native';
+
 
 class SearchScreen extends Component {
   render() {
@@ -18,7 +11,7 @@ class SearchScreen extends Component {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        <Text>SearchScreens</Text>
+        <Text>SearchScreen</Text>
       </View>
     );
   }

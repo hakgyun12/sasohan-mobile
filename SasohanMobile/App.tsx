@@ -6,10 +6,11 @@
  * @flow strict-local
  */
 import 'react-native-gesture-handler';
-import React, {Component, useEffect} from 'react';
-import {StyleSheet, View, Text, Image} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React, { Component, useEffect } from 'react';
+import { StyleSheet, View, Text, Image } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import HomeScreen from './src/home';
 import UserScreen from './src/user';
@@ -47,33 +48,48 @@ class App extends Component {
   };
 
   setAppLoaded = () => {
-    this.setState({isLoaded: true});
+    this.setState({ isLoaded: true });
   };
 
   render() {
     return (
-      <NavigationContainer>
-        <Tab.Navigator
-          initialRouteName="Home"
-          tabBarOptions={{
-            activeBackgroundColor: 'skyblue',
-            activeTintColor: 'blue',
-            inactiveTintColor: '#fff',
-            style: {
-              backgroundColor: '#c6cbef',
-            },
-          }}
-          screenOptions={({route}: {route: any}) => ({
-            tabBarLabel: route.name,
-            tabBarIcon: ({focused}: {focused: any}) =>
-              TabBarIcon(focused, route.name),
-          })}>
-          <Tab.Screen name="Search" component={SearchScreen} />
-          <Tab.Screen name="Post" component={PostScreen} />
-          <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="User" component={UserScreen} />
-        </Tab.Navigator>
-      </NavigationContainer>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <Tab.Navigator
+            initialRouteName="Home"
+            tabBarOptions={{
+              activeBackgroundColor: 'skyblue',
+              activeTintColor: 'blue',
+              inactiveTintColor: '#fff',
+              style: {
+                backgroundColor: '#c6cbef',
+              },
+            }}
+            screenOptions={({ route }: { route: any }) => ({
+              tabBarLabel: route.name,
+              tabBarIcon: ({ focused }: { focused: any }) =>
+                TabBarIcon(focused, route.name),
+            })}>
+            <Tab.Screen name="Search" component={SearchScreen} />
+            <Tab.Screen name="Post" component={PostScreen} />
+            <Tab.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{
+                title: 'My home',
+                headerStyle: {
+                  backgroundColor: '#f4511e',
+                },
+                headerTintColor: '#fff',
+                headerTintStyle: {
+                  fontWeight: 'bold',
+                }
+              }}
+            />
+            <Tab.Screen name="User" component={UserScreen} />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
     );
   }
 }
