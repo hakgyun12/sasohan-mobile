@@ -8,12 +8,14 @@
 
 import 'react-native-gesture-handler';
 import React, {useState} from 'react';
-import {View, Text, Platform, StyleSheet, Image, AsyncStorageStatic} from 'react-native';
+import {View, Text, Image} from 'react-native';
 import kakaoLogins, {KAKAO_AUTH_TYPES} from '@react-native-seoul/kakao-login'
 import AsyncStorage from '@react-native-community/async-storage';
+import styles from './styles';
 
 // @ts-ignore
 import Button from 'apsl-react-native-button'
+import { idText } from 'typescript';
 
 export default function LoginScreen() {
   const TOKEN_EMPTY = 'cannot fetched token';
@@ -29,7 +31,7 @@ export default function LoginScreen() {
     email: string,
     profile_image_url: string
   }
-  
+
   const [loginLoading, setLoginLoading] = useState<boolean>(false);
   const [logoutLoading, setLogoutLoading] = useState<boolean>(false);
   const [profileLoading, setProfileLoading] = useState<boolean>(false);
@@ -119,6 +121,7 @@ export default function LoginScreen() {
     })
   );
 
+
   return (
     <View style={styles.container}>
       <View style={styles.profile}>
@@ -163,55 +166,3 @@ export default function LoginScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    marginTop: Platform.OS === 'ios' ? 0 : 24,
-    paddingTop: Platform.OS === 'ios' ? 24 : 0,
-    backgroundColor: 'white',
-  },
-  profile: {
-    flex: 4,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  profilePhoto: {
-    width: 120,
-    height: 120,
-    borderWidth: 1,
-    borderColor: 'black',
-  },
-  content: {
-    flex: 6,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  token: {
-    width: 200,
-    fontSize: 12,
-    padding: 5,
-    borderRadius: 8,
-    marginVertical: 20,
-    backgroundColor: 'grey',
-    color: 'white',
-    textAlign: 'center',
-  },
-  btnKakaoLogin: {
-    height: 48,
-    width: 240,
-    alignSelf: 'center',
-    backgroundColor: '#F8E71C',
-    borderRadius: 0,
-    borderWidth: 0,
-  },
-  txtKakaoLogin: {
-    fontSize: 16,
-    color: '#3d3d3d',
-  },
-});
