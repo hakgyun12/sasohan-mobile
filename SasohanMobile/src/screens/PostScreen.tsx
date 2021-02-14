@@ -50,7 +50,8 @@ class AskModal extends Component {
             var lat = JSON.stringify(position.coords.latitude)
             var long = JSON.stringify(position.coords.longitude)
             console.log(lat, long);
-          },
+          },// console.log(location.latitude, location.longitude);
+          // console.log(this.ref.current)
           (error) => {
             console.log(error.code, error.message);
           },

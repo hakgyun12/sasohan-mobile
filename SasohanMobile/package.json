@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
@@ -16,17 +17,24 @@
     "@react-navigation/stack": "^5.14.2",
     "@types/react": "^17.0.0",
     "@types/react-native-snap-carousel": "^3.8.2",
+    "native-base": "^2.15.2",
+    "patch-package": "^6.2.2",
     "react": "16.13.1",
     "react-native": "0.63.4",
+    "react-native-cluster-map": "^1.0.9",
     "react-native-geolocation-service": "^5.1.1",
-    "react-native-gesture-handler": "^1.9.0",
-    "react-native-maps": "0.27.1",
+    "react-native-gesture-handler": "^1.10.0",
+    "react-native-map-clustering": "^3.4.2",
+    "react-native-maps": "git+https://git@github.com/react-native-community/react-native-maps.git",
+    "react-native-maps-super-cluster": "^1.6.0",
     "react-native-modal": "^11.6.1",
     "react-native-permissions": "^3.0.0",
     "react-native-reanimated": "^1.13.2",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-screens": "^2.17.1",
     "react-native-simple-modal": "^9.0.1",
+    "react-native-snap-carousel": "^3.9.1",
+    "react-navigation": "^4.4.3",
     "styled-components": "^5.2.1"
   },
   "devDependencies": {

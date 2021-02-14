@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.airbnb.android.react.maps.MapsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -32,7 +33,8 @@ public class MainApplication extends Application implements ReactApplication {
       // Packages that cannot be autolinked yet can be added manually here, for
       // example:
       // packages.add(new MyReactNativePackage());
-      return Arrays.<ReactPackage>asList(new MainReactPackage(), new MapsPackage(), new RNGestureHandlerPackage(),
+      return Arrays.<ReactPackage>asList(new MainReactPackage(),
+            new MapsPackage(), new RNGestureHandlerPackage(),
           new SafeAreaContextPackage(), new RNFusedLocationPackage());
     }
 
