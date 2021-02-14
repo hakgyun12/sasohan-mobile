@@ -14,6 +14,8 @@ target 'SasohanMobile' do
 
   pod 'react-native-lottie-splash-screen', :path => '../node_modules/react-native-lottie-splash-screen'
 
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
   target 'SasohanMobileTests' do
     inherit! :complete
     # Pods for testing

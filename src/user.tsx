@@ -8,10 +8,12 @@
 
 import 'react-native-gesture-handler';
 import React, {useState} from 'react';
-import {View, Text, Platform, StyleSheet, Image, AsyncStorageStatic, AsyncStorage} from 'react-native';
-import kakaoLogins, {KAKAO_AUTH_TYPES} from '@react-native-seoul/kakao-login';
+import {View, Text, Platform, StyleSheet, Image, AsyncStorageStatic} from 'react-native';
+import kakaoLogins, {KAKAO_AUTH_TYPES} from '@react-native-seoul/kakao-login'
+import AsyncStorage from '@react-native-community/async-storage';
+
+// @ts-ignore
 import Button from 'apsl-react-native-button'
-import { AsyncLocalStorage } from 'async_hooks';
 
 export default function LoginScreen() {
   const TOKEN_EMPTY = 'cannot fetched token';
@@ -120,7 +122,7 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.profile}>
-        <Image style={styles.profilePhoto} source={{uri: photo}} />
+        <Image style={styles.profilePhoto} source={{uri: photo !== "" ? photo : undefined}} />
         <Text>{`id : ${id}_kakao`}</Text>
         <Text></Text>
       </View>
