@@ -19,16 +19,14 @@ import { idText } from 'typescript';
 
 export default function LoginScreen() {
   const TOKEN_EMPTY = 'cannot fetched token';
-
   const PROFILE_EMPTY = {
     id: 'cannot fetched profile',
-    email: 'cannot fetched profile',
     profile_image_url: '',
   };
 
+
   interface Profile {
     id: string,
-    email: string,
     profile_image_url: string
   }
 
