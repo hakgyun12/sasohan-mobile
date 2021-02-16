@@ -13,14 +13,20 @@ import {
   Dimensions,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import Carousel, { CarouselProperties } from 'react-native-snap-carousel'
-import { NavigationInjectedProps, withNavigation } from 'react-navigation';
+import CarouselModel from '../model/CarouselModel';
 
-type initialPositionProps = {
+type currentPositionProps = {
   latitude: number;
   longitude: number;
   latitudeDelta: number;
   longitudeDelta: number;
+}
+
+type currentBoundingBox = {
+  NElatitude: number;
+  NElongitude: number;
+  SWlatitude: number;
+  SWlongitude: number;
 }
 
 type CoordProps = {
@@ -33,24 +39,25 @@ type CoordProps = {
 }
 
 type State = {
-  initialPosition: initialPositionProps;
+  isShowingCarousel: boolean;
+  currentPosition: currentPositionProps;
   coordinates: CoordProps[];
 }
 
 class Map extends React.Component<any, State> {
   mapRef = React.createRef<any>();
-  carousel = React.createRef<any>();
   _isMounted = false;
 
   constructor(props: any) {
     super(props);
 
     this.state = {
-      initialPosition: {
-        latitude: 37.715133,
-        longitude: 126.734086,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+      isShowingCarousel: false,
+      currentPosition: {
+        latitude: 0,
+        longitude: 0,
+        latitudeDelta: 0,
+        longitudeDelta: 0,
       },
       coordinates: [
         { postTitle: 'POST 1', postContent: 'CONTENT 1', categoryId: "가전/가구", price: 3000, latitude: 36.1294833, longitude: 128.3445733 },
@@ -67,6 +74,7 @@ class Map extends React.Component<any, State> {
    * Obtain permission to check the user's device and obtain the location accordingly.
    */
   requestLocationPermission = async () => {
+    console.log('start function requestLocationPermission')
     this._isMounted = true;
 
     //if user device is Android
@@ -87,8 +95,8 @@ class Map extends React.Component<any, State> {
             };
 
             this.setState({
-              initialPosition: {
-                ...this.state.initialPosition,
+              currentPosition: {
+                ...this.state.currentPosition,
                 latitude: region.latitude,
                 longitude: region.longitude,
                 latitudeDelta: 0.0922,
@@ -96,6 +104,7 @@ class Map extends React.Component<any, State> {
               }
             });
 
+            this.onRegionChangeComplete(region);
           },
           (error) => Alert.alert(error.message),
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 1000 },
@@ -114,71 +123,65 @@ class Map extends React.Component<any, State> {
   }
 
   componentDidMount() {
+    console.log('start componentDidMount')
     this._isMounted = true;
     if (this._isMounted) {
       this.requestLocationPermission();
     }
   }
 
-  onRegionChangeComplete = (region: initialPositionProps) => {
-    this.setState({ initialPosition: region });
+  onRegionChangeComplete = (region: currentPositionProps) => {
+    this.setState({ currentPosition: region });
+  }
+
+  /**
+   * When X is pressed in Carousel, the state is changed to false and Carousel is not rendered.
+   */
+  onClickCarousel = () => {
+    this.setState({ isShowingCarousel: true });
   }
 
   /**
    * Every time you turn the screen of a post, it shows the contents of the post corresponding to a marker.
    */
-  onCarouselItemChange = ({ index }: { index: number }) => {
-    let location = this.state.coordinates[index];
+  hideCarousel = () => this.setState({ isShowingCarousel: false });
 
-    const region = {
-      latitude: location.latitude,
-      longitude: location.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    }
-    this.mapRef.current.animateToRegion(region);
-  }
-
-  renderCarouselItem = ({ item }: { item: CoordProps }) => {
-    return (
-      <View
-        style={styles.cardContainer}>
-        <Text style={styles.titleStyle}>{item.postTitle}</Text>
-        <Text style={styles.contentStyle}>{item.postContent}</Text>
-        <Text style={styles.postStyle}>{item.latitude}, {item.longitude}</Text>
-        <Button onPress={() => this.props.navigation.navigate('DetailPostScreen', {
-          postTitle: item.postTitle,
-          postContent: item.postContent,
-          categoryId: item.categoryId,
-          price: item.price,
-        })}
-          title="게시물 이동하기" />
-      </View>
-    )
+  renderCarouselItem = ({ location }: { location: CoordProps }) => {
+    <CarouselModel
+      item={location}
+      isShowingCarousel={this.state.isShowingCarousel}
+      hideCarousel={this.hideCarousel}
+      navigation={this._isMounted}
+    />
   }
   /**
    * When you click a marker, go to the marker screen in the middle of the screen and show the corresponding carousel UI.
    */
-  onMarkerPressed = (location: CoordProps, index: number) => {
-    const { onRegionChangeComplete } = this.props;
+  onMarkerPressed = (location: CoordProps) => {
+    console.log('start function onMarkerPressed');
+    const { isShowingCarousel } = this.state;
+    // const { onRegionChangeComplete } = this.props;
     const region = {
       latitude: location.latitude,
-      longitude: location.latitude,
+      longitude: location.longitude,
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0422,
     }
-
-    onRegionChangeComplete(region);
-    //this.mapRef.current.animateToRegion(region);
-    this.mapRef.current.onSnapToItem(index);
+    console.log(region);
+    this.onRegionChangeComplete(region);
+    if (!isShowingCarousel) {
+      this.renderCarouselItem({ location })
+      this.setState({ isShowingCarousel: true });
+    }
   }
 
   componentWillUnMount() {
+    console.log('start componentWillUnMount')
     this._isMounted = false;
   }
 
   render() {
-    const initialPosition = this.state.initialPosition
+    const currentPosition = this.state.currentPosition
     return (
       <View>
         <View style={styles.container}>
@@ -186,7 +189,7 @@ class Map extends React.Component<any, State> {
             provider={PROVIDER_GOOGLE}
             ref={this.mapRef}
             style={styles.map}
-            region={initialPosition}
+            region={currentPosition}
             showsUserLocation={true}
             zoomEnabled={true}
             zoomControlEnabled={true}
@@ -202,43 +205,33 @@ class Map extends React.Component<any, State> {
                     latitude: marker.latitude,
                     longitude: marker.longitude,
                   }}
-                  title={marker.postTitle}>
+                  onPress={() => this.onMarkerPressed(marker)}>
                 </Marker>
               ))}
           </MapView>
-
-          <Carousel
-            ref={this.carousel}
-            data={this.state.coordinates}
-            containerCustomStyle={styles.carousel}
-            renderItem={this.renderCarouselItem}
-            onSnapToItem={(index) => this.onCarouselItemChange({ index })}
-            removeClippedSubviews={false}
-            sliderWidth={Dimensions.get('window').width}
-            itemWidth={300}
-          />
         </View>
       </View>
     );
   }
 }
 
-
 /**
  * Height is expressed as a number, but must be expressed absolutely later.
  */
+const { width, height } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
   },
   map: {
     ...StyleSheet.absoluteFillObject,
-    minHeight: 700,
+    width,
+    height,
   },
   carousel: {
     position: 'absolute',
     marginBottom: 30,
-    marginTop: 550,
+    marginTop: 470,
   },
   cardContainer: {
     backgroundColor: 'white',

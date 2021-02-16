@@ -40,31 +40,6 @@ class AskModal extends Component {
     this.setState({ modalVisible: visible })
   }
 
-  async requestLocationPermission() {
-    try {
-      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        Alert.alert("You've access for the location");
-        Geolocation.getCurrentPosition(
-          (position) => {
-            var lat = JSON.stringify(position.coords.latitude)
-            var long = JSON.stringify(position.coords.longitude)
-            console.log(lat, long);
-          },// console.log(location.latitude, location.longitude);
-          // console.log(this.ref.current)
-          (error) => {
-            console.log(error.code, error.message);
-          },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-        );
-      } else {
-        Alert.alert("You don't have access for the location");
-      }
-    } catch (err) {
-      Alert.alert(err)
-    }
-  }
-
   render() {
     const { modalVisible } = this.state;
     return (
@@ -90,7 +65,6 @@ class AskModal extends Component {
                   title="Yes"
                   onPress={() => {
                     this.setModalVisible(!modalVisible);
-                    this.requestLocationPermission();
                   }}
                 >
                   <Text style={styles.textStyle}>Yes</Text>

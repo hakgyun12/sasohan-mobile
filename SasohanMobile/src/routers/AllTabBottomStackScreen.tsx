@@ -14,7 +14,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import HomeStackScreen from './HomeStackScreen';
 import UserScreen from '../screens/UserScreen';
 import SearchScreen from '../screens/SearchScreen';
-import PostScreen from '../screens/PostScreen';
+import PostStackScreen from './PostStackScreen';
 
 const Tab = createBottomTabNavigator();
 const TabBarIcon = (focused: any, name: any) => {
@@ -68,7 +68,7 @@ class AllTabBottomStackScreen extends Component {
                         TabBarIcon(focused, route.name),
                 })}>
                 <Tab.Screen name="Search" component={SearchScreen} />
-                <Tab.Screen name="Post" component={PostScreen} />
+                <Tab.Screen name="Post" component={PostStackScreen} />
                 <Tab.Screen
                     name="Home"
                     component={HomeStackScreen}
