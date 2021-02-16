@@ -50,7 +50,7 @@ export default class User extends React.Component<Props, State> {
     this.setState({user: {...this.state.user, nickname: this.state.user.tmpNickname}})
   }
 
-  checkNickName = (e: any) => {
+  checkNickName =  () => {
       const chkNickname = function(str: string) {
         var regNm = /^[0-9a-zA-Z가-힣]{2,8}$/; 
         return regNm.test(str) ? true : false;
@@ -71,6 +71,8 @@ export default class User extends React.Component<Props, State> {
       }
   }
 
+
+
   
 
   checkNicknameList = (element: string) => {
@@ -83,8 +85,8 @@ export default class User extends React.Component<Props, State> {
     const user_ide = this.props.route.params.user_ide;
     return (
       <View style={styles.container}>
-      <Text style={styles.headerText}>TextInput 가지고 놀아보자</Text>
-      <Text style={styles.headerText}>{user_ide}</Text>
+      <Text style={styles.headerText}>닉네임 설정</Text>
+      <Text style={styles.headerText}>id: {user_ide}</Text>
       <View style={styles.bodyContainer}>
         <TextInput
           style={styles.textInput}

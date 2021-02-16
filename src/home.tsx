@@ -14,7 +14,6 @@ import styles from './styles';
 
 // @ts-ignore
 import Button from 'apsl-react-native-button'
-import { callbackify } from 'util';
 
 interface Profile {
   id: string,
@@ -120,6 +119,7 @@ export default class LoginScreen extends React.Component<any, State> {
         this.setState({idInfo: {...this.state.idInfo, profile: {id: result.id, profile_image_url: result.profile_image_url}}})
         this.setState({loading: {...this.state.loading, profileLoading: false}})
         console.log(`Get Profile Finished:${JSON.stringify(result)}`);
+        this.props.navigation.navigate('Search', {user_ide: this.state.idInfo.profile.id});
       })
       .catch(err => {
         this.setState({loading: {...this.state.loading, profileLoading: false}})
@@ -143,13 +143,6 @@ export default class LoginScreen extends React.Component<any, State> {
       });
   };
 
-  kakaoSignin = () => {
-    console.log('kakao sign in start');
-      this.kakaoLogin();
-      this.getProfile();
-      this.props.navigation.navigate('Search', {user_ide: this.state.idInfo.profile.id});
-  }
-
   render() {
     return(
       <View style={styles.container}>
@@ -162,9 +155,9 @@ export default class LoginScreen extends React.Component<any, State> {
         <Button
           isLoading={this.state.loading.loginLoading}
           onPress={() => {
-            this.kakaoSignin();
+            this.kakaoLogin();
             setTimeout(() => {
-              this.kakaoSignin();
+              this.getProfile();
             } , 500)
             }
           }
