@@ -7,9 +7,7 @@
  */
 import 'react-native-gesture-handler';
 import React, { Component } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { inflate } from 'zlib';
-import { resolveAny } from 'dns';
+import { View, Text, Button, StyleSheet, Image } from 'react-native';
 
 type item = {
     postTitle: string;
@@ -21,53 +19,50 @@ type item = {
 }
 
 interface Props {
-    navigation: any,
     item: item
-    isShowingCarousel: boolean
-    hideCarousel: () => void;
+    hideCarousel: () => void
+    ClicktoMoveDetailScreen: () => void
 }
-interface State { }
 
-class CarouselModel extends Component<Props, State> {
-    constructor(props: any) {
-        super(props)
-        this.state = {
-            checkedCarousel: false
-        }
+class CarouselModel extends Component<Props> {
+    constructor(props: any){
+        super(props);
     }
 
     render() {
         return (
-            <View
-                style={styles.cardContainer}>
-                <View>
-                    <View>
-                        <Text style={styles.titleStyle}>{this.props.item.postTitle}</Text>
+            <View style = {{position: 'absolute'}}>
+               <View style={styles.cardContainer}>
+                   <View style={styles.cardHeader}>
+                        <View>
+                            <Text style={styles.cardTitle}>
+                                {this.props.item.postTitle}
+                            </Text>
+                        </View>
+                        <View>
+                            <Text style={styles.cardCategory}>
+                                {this.props.item.categoryId}
+                            </Text>
+                        </View>
+                        <View style={styles.cardCloseBtn}>
+                            <Button onPress={this.props.hideCarousel} title="X" />
+                        </View>
                     </View>
                     <View>
-                        <Button onPress={() => this.props.hideCarousel} title="X" />
+                        <Text style={styles.cardContent}>
+                            {this.props.item.postContent}
+                        </Text>
+                    </View>
+                    <View>
+                        <Button onPress={this.props.ClicktoMoveDetailScreen} title="게시물 이동하기"/>
                     </View>
                 </View>
-                <Text style={styles.contentStyle}>{this.props.item.postContent}</Text>
-                <Text style={styles.postStyle}>{this.props.item.latitude}, {this.props.item.longitude}</Text>
-                <Button onPress={() => this.props.navigation.navigate('DetailPostScreen', {
-                    postTitle: this.props.item.postTitle,
-                    postContent: this.props.item.postContent,
-                    categoryId: this.props.item.categoryId,
-                    price: this.props.item.price,
-                })}
-                    title="게시물 이동하기" />
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    carousel: {
-        position: 'absolute',
-        marginBottom: 30,
-        marginTop: 470,
-    },
     cardContainer: {
         backgroundColor: 'white',
         height: 170,
@@ -75,33 +70,25 @@ const styles = StyleSheet.create({
         padding: 24,
         borderRadius: 24,
     },
-    titleStyle: {
+    cardHeader: {
+        flexDirection: 'row',
+    },
+    cardTitle: {
         fontSize: 30,
         color: 'black',
-        marginBottom: 5,
     },
-    contentStyle: {
+    cardCloseBtn: {
+        marginLeft: 60,
+    },
+    cardCategory: {
+        marginLeft: 30,
+        marginTop: 15,
+    },
+    cardContent: {
         fontSize: 15,
         color: 'black',
-        marginBottom: 5,
-    },
-    postStyle: {
-        fontSize: 15,
-        color: 'black',
-    },
-    buttonStyle: {
-        height: 50,
-        width: 30,
-    },
-    headerBar: {
         height: 60,
-        backgroundColor: 'skyblue',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    headerBarText: {
-        fontSize: 20,
-        color: 'black',
+        width: 200,
     },
 })
 

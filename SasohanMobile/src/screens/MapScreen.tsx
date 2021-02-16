@@ -42,11 +42,12 @@ type State = {
   isShowingCarousel: boolean;
   currentPosition: currentPositionProps;
   coordinates: CoordProps[];
+  currentBoundingBox: currentBoundingBox;
+  setCarouselItem: CoordProps;
 }
 
 class Map extends React.Component<any, State> {
   mapRef = React.createRef<any>();
-  _isMounted = false;
 
   constructor(props: any) {
     super(props);
@@ -66,19 +67,21 @@ class Map extends React.Component<any, State> {
         { postTitle: 'POST 4', postContent: 'CONTENT 4', categoryId: "카테고리", price: 6000, latitude: 36.1494833, longitude: 128.3245733 },
         { postTitle: 'POST 5', postContent: 'CONTENT 5', categoryId: "카테고리", price: 7000, latitude: 36.1594833, longitude: 128.3645733 },
       ],
+      setCarouselItem: {
+        postTitle: '', postContent: '', categoryId: "", price: 0, latitude: 0, longitude: 0,
+      },
+      currentBoundingBox: {
+        NElatitude: 0, NElongitude: 0, SWlatitude: 0, SWlongitude: 0,
+      }
     }
-    this.onRegionChangeComplete = this.onRegionChangeComplete.bind(this)
-    this.renderCarouselItem = this.renderCarouselItem.bind(this)
   }
   /**
    * Obtain permission to check the user's device and obtain the location accordingly.
    */
   requestLocationPermission = async () => {
-    console.log('start function requestLocationPermission')
-    this._isMounted = true;
 
     //if user device is Android
-    if (Platform.OS === 'android' && this._isMounted == true) {
+    if (Platform.OS === 'android') {
       const response = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
@@ -87,16 +90,22 @@ class Map extends React.Component<any, State> {
         Geolocation.getCurrentPosition(
           (position) => {
 
-            const region = {
+            this.mapRef.current.animateToRegion({
+              ...this.state.currentPosition,
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
+            })
+
+            const region = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
             };
 
             this.setState({
               currentPosition: {
-                ...this.state.currentPosition,
+              ...this.state.currentPosition,
                 latitude: region.latitude,
                 longitude: region.longitude,
                 latitudeDelta: 0.0922,
@@ -104,7 +113,7 @@ class Map extends React.Component<any, State> {
               }
             });
 
-            this.onRegionChangeComplete(region);
+            this.mapRef.current.animateToRegion(this.state.currentPosition);
           },
           (error) => Alert.alert(error.message),
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 1000 },
@@ -123,61 +132,67 @@ class Map extends React.Component<any, State> {
   }
 
   componentDidMount() {
-    console.log('start componentDidMount')
-    this._isMounted = true;
-    if (this._isMounted) {
-      this.requestLocationPermission();
-    }
+    this.requestLocationPermission();
   }
+
 
   onRegionChangeComplete = (region: currentPositionProps) => {
-    this.setState({ currentPosition: region });
-  }
-
-  /**
-   * When X is pressed in Carousel, the state is changed to false and Carousel is not rendered.
-   */
-  onClickCarousel = () => {
-    this.setState({ isShowingCarousel: true });
+    this.setState({ currentPosition: region })
+    this.setState({
+      currentBoundingBox: {
+        ...this.state.currentBoundingBox,
+        NElatitude: region.latitude + region.latitudeDelta / 2, // northLat - max lat
+        NElongitude: region.longitude + region.longitudeDelta / 2, // eastLng - max lng
+        SWlatitude: region.latitude - region.latitudeDelta / 2, // southLat - min lat
+        SWlongitude: region.longitude - region.longitudeDelta / 2, // westLng - min lng
+      }
+    })
   }
 
   /**
    * Every time you turn the screen of a post, it shows the contents of the post corresponding to a marker.
    */
-  hideCarousel = () => this.setState({ isShowingCarousel: false });
-
-  renderCarouselItem = ({ location }: { location: CoordProps }) => {
-    <CarouselModel
-      item={location}
-      isShowingCarousel={this.state.isShowingCarousel}
-      hideCarousel={this.hideCarousel}
-      navigation={this._isMounted}
-    />
+  hideCarousel = () => {
+    this.setState({ isShowingCarousel: false })
   }
+
+  ClickMovetoDetailScreen = () => {
+    this.props.navigation.navigate('DetailPostScreen', {
+      postTitle: this.state.setCarouselItem.postTitle,
+      postContent: this.state.setCarouselItem.postContent,
+      categoryId: this.state.setCarouselItem.categoryId,
+      price: this.state.setCarouselItem.price,
+    })}
+
   /**
    * When you click a marker, go to the marker screen in the middle of the screen and show the corresponding carousel UI.
    */
   onMarkerPressed = (location: CoordProps) => {
-    console.log('start function onMarkerPressed');
     const { isShowingCarousel } = this.state;
-    // const { onRegionChangeComplete } = this.props;
+
     const region = {
       latitude: location.latitude,
       longitude: location.longitude,
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0422,
     }
-    console.log(region);
-    this.onRegionChangeComplete(region);
+
+    this.mapRef.current.animateToRegion(region);
+
+    this.setState({
+      setCarouselItem: {
+        ...this.state.setCarouselItem,
+        postTitle: location.postTitle,
+        postContent: location.postContent,
+        price: location.price,
+        categoryId: location.categoryId,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      }
+    })
     if (!isShowingCarousel) {
-      this.renderCarouselItem({ location })
       this.setState({ isShowingCarousel: true });
     }
-  }
-
-  componentWillUnMount() {
-    console.log('start componentWillUnMount')
-    this._isMounted = false;
   }
 
   render() {
@@ -193,7 +208,7 @@ class Map extends React.Component<any, State> {
             showsUserLocation={true}
             zoomEnabled={true}
             zoomControlEnabled={true}
-            tracksViewChanges={false}
+
             onRegionChangeComplete={this.onRegionChangeComplete}
           >
             {
@@ -210,6 +225,15 @@ class Map extends React.Component<any, State> {
               ))}
           </MapView>
         </View>
+        {this.state.isShowingCarousel &&
+        <View style={{position: 'absolute', bottom: 10}}>
+          <CarouselModel
+            item={this.state.setCarouselItem}
+            hideCarousel={this.hideCarousel}
+            ClicktoMoveDetailScreen={this.ClickMovetoDetailScreen}
+          />
+        </View>
+        }
       </View>
     );
   }
@@ -225,8 +249,13 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+    flex: 6,
     width,
     height,
+  },
+  header: {
+    flex: 1,
+    backgroundColor: 'yellow'
   },
   carousel: {
     position: 'absolute',
