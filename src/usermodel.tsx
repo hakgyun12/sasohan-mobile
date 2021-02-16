@@ -2,7 +2,7 @@ import React from 'react';
 import {Alert, View, Text, Image} from 'react-native';
 import styles from './styles';
 
-type User_Info = {
+interface Userinfo {
     user_id: string;
     nickname: string;
     nicknameCheck: string;
@@ -10,7 +10,17 @@ type User_Info = {
     age: number;
 }
 
-class User extends React.Component<User_Info, any> {
+type userInfoProps = {
+    userInfo: Userinfo;
+}
+
+type State = {
+    user: userInfoProps;
+}
+
+
+
+class User extends React.Component<Userinfo, any> {
     constructor(props: any) {
         super(props);
 
@@ -24,7 +34,9 @@ class User extends React.Component<User_Info, any> {
             }
         };
     }
+
     
+
     handleNickname = (e: any) => {
         e.preventDefault();
         this.setState({
@@ -32,9 +44,7 @@ class User extends React.Component<User_Info, any> {
         });
     };
 
-    checkNickName = (e: any) => {
-        e.preventDefault();
-
+    checkNickName = () => {
         const chkNickname = function(str: string) {
             var regNm = /^[가-힣]{2,15}|[a-zA-Z]{2,15}\s[a-zA-Z]{2,15}$/;
             return regNm.test(str) ? true : false;

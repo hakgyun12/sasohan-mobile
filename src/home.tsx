@@ -8,17 +8,22 @@
 
 import 'react-native-gesture-handler';
 import React, {useState} from 'react';
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, Share} from 'react-native';
 import kakaoLogins, {KAKAO_AUTH_TYPES} from '@react-native-seoul/kakao-login'
-import AsyncStorage from '@react-native-community/async-storage';
 import styles from './styles';
 
 // @ts-ignore
 import Button from 'apsl-react-native-button'
+import { callbackify } from 'util';
 
 interface Profile {
   id: string,
   profile_image_url: any
+}
+
+interface Token {
+  accessToken: string,
+  refreshToken: string
 }
 
 type loadingProps = {
@@ -26,27 +31,30 @@ type loadingProps = {
   logoutLoading: boolean;
   profileLoading: boolean;
   unlinkLoading: boolean;
+  signinLoading: boolean;
 }
 
-type userInfoProps = {
-  token: string;
+type idInfoProps = {
+  token: Token;
   profile: Profile;
 }
 
 type State = {
   loading: loadingProps;
-  userInfo: userInfoProps;
+  idInfo: idInfoProps;
 }
 
-const TOKEN_EMPTY = 'cannot fetched token';
+const TOKEN_EMPTY = {
+  accessToken: 'cannot fetched access token',
+  refreshToken: 'cannot fetched refresh token'
+}
 
 const PROFILE_EMPTY = {
-  id: 'cannot fetched profile',
+  id: 'cannot fetched id',
   profile_image_url: '',
 };
 
 export default class LoginScreen extends React.Component<any, State> {
-
   constructor(props: any) {
     super(props);
 
@@ -55,9 +63,10 @@ export default class LoginScreen extends React.Component<any, State> {
         loginLoading: false,
         logoutLoading: false,
         profileLoading: false,
-        unlinkLoading: false
+        unlinkLoading: false,
+        signinLoading: false
       },
-      userInfo: {
+      idInfo: {
         token: TOKEN_EMPTY,
         profile: PROFILE_EMPTY
       }
@@ -66,90 +75,99 @@ export default class LoginScreen extends React.Component<any, State> {
 
   kakaoLogin = () => {
     console.log('login for kakao');
-    this.state.loading.loginLoading = true;
+    this.setState({loading: {...this.state.loading, loginLoading: true}});
 
     kakaoLogins.login([KAKAO_AUTH_TYPES.Talk, KAKAO_AUTH_TYPES.Account]).then(result => {
-      this.state.userInfo.token = result.accessToken;
+      this.setState({idInfo: {...this.state.idInfo, token: {accessToken: result.accessToken, refreshToken: result.refreshToken}}})
+      this.setState({loading: {...this.state.loading, loginLoading: false}}),
       console.log(`Login Finished:${JSON.stringify(result)}`,
-      this.state.loading.loginLoading = false,
-      console.log(`Token:${JSON.stringify(this.state.userInfo.token)}`),
+      console.log(`Token:${JSON.stringify(this.state.idInfo.token)}`),
       );
     })
     .catch(err => {
     if (err.code === 'E_CANCELLED_OPERATION') {
+      this.setState({loading: {...this.state.loading, loginLoading: false}})
       console.log(`Login Cancelled:${err.message}`);
-      this.state.loading.loginLoading = false;
     } else {
+      this.setState({loading: {...this.state.loading, loginLoading: false}})
       console.log(`Login Failed:${err.code} ${err.message}`);
-      this.state.loading.loginLoading = false;
       }
     });
   };
 
   kakaoLogout = () => {
     console.log('Logout');
-    this.state.loading.logoutLoading = true;
+    this.setState({loading: {...this.state.loading, logoutLoading: true}});
 
     kakaoLogins.logout().then(result => {
-      this.state.userInfo.token = TOKEN_EMPTY;
-      this.state.userInfo.profile = PROFILE_EMPTY;
+      this.setState({idInfo: {...this.state.idInfo, token: TOKEN_EMPTY}})
+      this.setState({idInfo: {...this.state.idInfo, profile: PROFILE_EMPTY}})
       console.log(`Logout Finished:${result}`);
-      this.state.loading.logoutLoading = false;
+      this.setState({loading: {...this.state.loading, logoutLoading: false}})
     })
     .catch(err => {
+      this.setState({loading: {...this.state.loading, logoutLoading: false}})
       console.log(`Logout Failed:${err.code} ${err.message}`);
-      this.state.loading.logoutLoading = false;
     });
   };
 
   getProfile = () => {
     console.log('Get Profile Start');
-    this.state.loading.profileLoading = true;
+    this.setState({loading: {...this.state.loading, profileLoading: true}})
 
     kakaoLogins.getProfile()
       .then(result => {
-        this.state.userInfo.profile.id = result.id;
-        this.state.userInfo.profile.profile_image_url = result.profile_image_url;
+        this.setState({idInfo: {...this.state.idInfo, profile: {id: result.id, profile_image_url: result.profile_image_url}}})
+        this.setState({loading: {...this.state.loading, profileLoading: false}})
         console.log(`Get Profile Finished:${JSON.stringify(result)}`);
-        this.state.loading.profileLoading = false;
-        console.log(this.state.userInfo.profile.id);
-        console.log(this.state.userInfo.profile.profile_image_url);
       })
       .catch(err => {
+        this.setState({loading: {...this.state.loading, profileLoading: false}})
         console.log(`Get Profile Failed:${err.code} ${err.message}`);
-        this.state.loading.profileLoading = false;
       });
   };
 
   unlinkKakao = () => {
     console.log('Unlink Start');
-    this.state.loading.unlinkLoading = true;
+    this.setState({loading: {...this.state.loading, unlinkLoading: true}})
 
     kakaoLogins.unlink().then(result => {
-        this.state.userInfo.token = TOKEN_EMPTY;
-        this.state.userInfo.profile = PROFILE_EMPTY;
-        console.log(`Unlink Finished:${result}`);
-        this.state.loading.unlinkLoading = false;
+      this.setState({idInfo: {...this.state.idInfo, token: TOKEN_EMPTY}})
+      this.setState({idInfo: {...this.state.idInfo, profile: PROFILE_EMPTY}})
+      console.log(`Unlink Finished:${result}`);
+      this.setState({loading: {...this.state.loading, unlinkLoading: false}})
       })
       .catch(err => {
+        this.setState({loading: {...this.state.loading, unlinkLoading: false}})
         console.log(`Unlink Failed:${err.code} ${err.message}`);
-        this.state.loading.unlinkLoading = false;
       });
   };
 
+  kakaoSignin = () => {
+    console.log('kakao sign in start');
+      this.kakaoLogin();
+      this.getProfile();
+      this.props.navigation.navigate('Search', {user_ide: this.state.idInfo.profile.id});
+  }
 
   render() {
     return(
       <View style={styles.container}>
       <View style={styles.profile}>
-        <Image style={styles.profilePhoto} source={{uri: this.state.userInfo.profile.profile_image_url !== "" ? this.state.userInfo.profile.profile_image_url : undefined}} />
-        <Text>{`id : ${this.state.userInfo.profile.id}_kakao`}</Text>
+        <Image style={styles.profilePhoto} source={{uri: this.state.idInfo.profile.profile_image_url !== "" ? this.state.idInfo.profile.profile_image_url : undefined}} />
+        <Text>{`id : ${this.state.idInfo.profile.id}_kakao`}</Text>
         <Text></Text>
       </View>
       <View style={styles.content}>
         <Button
           isLoading={this.state.loading.loginLoading}
-          onPress={this.kakaoLogin}
+          onPress={() => {
+            this.kakaoSignin();
+            setTimeout(() => {
+              this.kakaoSignin();
+            } , 500)
+            }
+          }
           activeOpacity={0.5}
           style={styles.btnKakaoLogin}
           textStyle={styles.txtKakaoLogin}>
@@ -162,14 +180,6 @@ export default class LoginScreen extends React.Component<any, State> {
           style={styles.btnKakaoLogin}
           textStyle={styles.txtKakaoLogin}>
           LOGOUT
-        </Button>
-        <Button
-          isLoading={this.state.loading.profileLoading}
-          onPress={this.getProfile}
-          activeOpacity={0.5}
-          style={styles.btnKakaoLogin}
-          textStyle={styles.txtKakaoLogin}>
-          GETPROFILE
         </Button>
         <Button
           isLoading={this.state.loading.unlinkLoading}
