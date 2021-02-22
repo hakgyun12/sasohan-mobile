@@ -6,113 +6,192 @@
  * @flow strict-local
  */
 import 'react-native-gesture-handler';
-import React, { Component } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Button,
-  Alert,
-  PermissionsAndroid,
+  ScrollView,
+  Image,
+  TouchableOpacity
 } from 'react-native';
-import Modal from 'react-native-modal';
-import Geolocation from 'react-native-geolocation-service';
 
-class PostScreen extends Component {
-  render() {
-    return (
-      <AskModal />
-    );
-  }
+import postList from '../../postList.json';
+
+
+type Props = { 
+  navigation: any
 }
 
-class AskModal extends Component {
-  state = {
-    modalVisible: false,
-    agreeLocation: false
-  };
+type PostProps = {
+  title: string;
+  body: string;
+  category_id: string;
+  price: number;
+}
 
-  setAgreeLocation = (location: boolean) => {
-    this.setState({ agreeLocation: location })
-  }
 
-  setModalVisible = (visible: boolean) => {
-    this.setState({ modalVisible: visible })
-  }
+type State = {
+    data: any,
+    itemToRender: number;
+    setPostItems: PostProps;
+}
 
-  render() {
-    const { modalVisible } = this.state;
-    return (
-      <View style={styles.centeredView}>
-        <Button
-          title="Show modal"
-          onPress={() => {
-            this.setModalVisible(true);
-          }}
-        >
-          <Text style={styles.textStyle}>Show Modal</Text>
-        </Button>
-        <Modal
-          isVisible={modalVisible}
-          useNativeDriver={true}
-          hideModalContentWhileAnimating={true}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>Do you agree with location-provided information services?</Text>
-              <View style={{ flexDirection: 'row' }}>
-                <Button
-                  title="Yes"
-                  onPress={() => {
-                    this.setModalVisible(!modalVisible);
-                  }}
-                >
-                  <Text style={styles.textStyle}>Yes</Text>
-                </Button>
-                <Button
-                  title="No"
-                  onPress={() => {
-                    this.setModalVisible(!modalVisible);
-                  }}
-                >
-                  <Text style={styles.textStyle}>No</Text>
-                </Button>
-              </View>
+class PostScreen extends React.Component<Props, State> {
+
+    constructor(props: any){
+        super(props);
+        this.state = {
+            data: postList,
+            itemToRender: 10,
+            setPostItems: {
+              title: "", body: "", category_id: "", price: 0,
+            }
+        }
+    }
+
+    ClickMovetoWriteScreen = () => {
+      this.props.navigation.navigate('WritePostScreen')
+    }
+
+    ClickMovetoSearchScreen = () => {
+      this.props.navigation.navigate('SearchScreen')
+    }
+
+    ClickMovetoDetailPostScreen = (index: number) => {
+        this.props.navigation.navigate('DetailPostScreen', {
+          title: this.state.data[index].post.title,
+          body: this.state.data[index].post.body,
+          category_id: this.state.data[index].post.category_id,
+          price: this.state.data[index].post.price,
+        })
+    }
+      
+    render() {
+        const items = this.state.data.map((item: any, index: number) => {
+            if (index+1 <= this.state.itemToRender){
+              return (
+                  <TouchableOpacity
+                    onPress={() => this.ClickMovetoDetailPostScreen(index)}
+                    key={index}
+                  >
+                    <View key={item.post.user_id} style={styles.item}>
+                          <View style={styles.marginLeft}>
+                            <Text style={styles.title}> {item.post.title}</Text>
+                            <Text style={styles.body}> {item.post.body} </Text>
+                          </View>   
+                    </View>
+                  </TouchableOpacity>
+              )
+            }
+        })
+        return (
+            <View style={styles.contentContainer}>
+                <View>
+                    <View style = {{flexDirection: 'row'}}>
+                        <Image 
+                          source={require('../pics/Logo.jpg')}
+                          style={styles.logo}
+                        />
+                        <TouchableOpacity
+                          onPress={this.ClickMovetoSearchScreen}
+                        >
+                          <Image 
+                            source={require('../pics/search.png')}
+                            style={styles.search}
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={this.ClickMovetoWriteScreen}
+                        >
+                          <Image
+                            source={require('../pics/write.png')}
+                            style={styles.write}
+                          />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View>
+                  <ScrollView onMomentumScrollEnd={(e) => {
+                    const scrollPosition = e.nativeEvent.contentOffset.y;
+                    const scrollViewHeight = e.nativeEvent.layoutMeasurement.height;
+                    const contentHeight = e.nativeEvent.contentSize.height;
+                    const isScrolledToBottom = scrollViewHeight + scrollPosition;
+
+                    if (isScrolledToBottom >= (contentHeight-50) && this.state.itemToRender <= this.state.data.length){
+                      this.setState({ itemToRender: this.state.itemToRender + 10})
+                    }
+                  }}>
+                      <View>
+                          {items}
+                      </View>
+                  </ScrollView>
+                </View>
             </View>
-          </View>
-        </Modal>
-      </View>
-    );
-  }
+        )
+    }
+
 }
 
 const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
+  contentContainer: {
+    backgroundColor: 'white',
+    position: 'relative',
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    alignItems: "center",
-    minHeight: 50,
-    minWidth: 50,
+  item: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: 'grey',
+    alignItems: 'center',
   },
-  modalText: {
+  title: {
+    marginVertical: 30,
     fontSize: 20,
-    alignItems: "center",
+    fontWeight: 'bold',
+    marginLeft: 10
   },
-  textStyle: {
+  body: {
+    marginVertical: 30,
     fontSize: 15,
+    fontWeight: 'bold',
+    marginLeft: 10
   },
-  openButton: {
-    backgroundColor: "#F194FF",
-    borderRadius: 20,
-    padding: 20,
-    elevation: 2
+  marginLeft: {
+    marginLeft: 5,
+  },
+  menu: {
+    width: 20,
+    height: 2,
+    backgroundColor: '#111',
+    margin: 2,
+    borderRadius: 3,
+  },
+  header: {
+    flexDirection: 'row',
+    height: 70,
+    backgroundColor: 'orange',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  postBtn: {
+    marginLeft: 200,
+  },
+  logo: {
+    height: 50,
+  },
+  search: {
+    width: 50,
+    height: 50,
+  },
+  write: {
+    width: 50,
+    height: 50,
   }
-});
+})
 
 export default PostScreen;

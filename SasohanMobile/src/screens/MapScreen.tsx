@@ -1,14 +1,11 @@
 import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapView from 'react-native-map-clustering';
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   StyleSheet,
-  Text,
   Alert,
   Platform,
   View,
-  Image,
-  Button,
   PermissionsAndroid,
   Dimensions,
 } from 'react-native';
@@ -30,9 +27,9 @@ type currentBoundingBox = {
 }
 
 type CoordProps = {
-  postTitle: string;
-  postContent: string;
-  categoryId: string;
+  title: string;
+  body: string;
+  category_id: string;
   price: number;
   latitude: number;
   longitude: number;
@@ -46,7 +43,7 @@ type State = {
   setCarouselItem: CoordProps;
 }
 
-class Map extends React.Component<any, State> {
+class Map extends Component<any, State> {
   mapRef = React.createRef<any>();
 
   constructor(props: any) {
@@ -61,14 +58,14 @@ class Map extends React.Component<any, State> {
         longitudeDelta: 0,
       },
       coordinates: [
-        { postTitle: 'POST 1', postContent: 'CONTENT 1', categoryId: "Í∞ÄÏ†Ñ/Í∞ÄÍµ¨", price: 3000, latitude: 36.1294833, longitude: 128.3445733 },
-        { postTitle: 'POST 2', postContent: 'CONTENT 2', categoryId: "Ïä§Ìè¨Ï∏†", price: 4000, latitude: 36.1094833, longitude: 128.3345733 },
-        { postTitle: 'POST 3', postContent: 'CONTENT 3', categoryId: "Ïπ¥ÌÖåÍ≥†Î¶¨", price: 5000, latitude: 36.1394833, longitude: 128.3545733 },
-        { postTitle: 'POST 4', postContent: 'CONTENT 4', categoryId: "Ïπ¥ÌÖåÍ≥†Î¶¨", price: 6000, latitude: 36.1494833, longitude: 128.3245733 },
-        { postTitle: 'POST 5', postContent: 'CONTENT 5', categoryId: "Ïπ¥ÌÖåÍ≥†Î¶¨", price: 7000, latitude: 36.1594833, longitude: 128.3645733 },
+        { title: 'POST 1', body: 'CONTENT 1', category_id: "ƒ´≈◊∞Ì∏Æ", price: 3000, latitude: 36.1294833, longitude: 128.3445733 },
+        { title: 'POST 2', body: 'CONTENT 2', category_id: "ƒ´≈◊∞Ì∏Æ", price: 4000, latitude: 36.1094833, longitude: 128.3345733 },
+        { title: 'POST 3', body: 'CONTENT 3', category_id: "ƒ´≈◊∞Ì∏Æ", price: 5000, latitude: 36.1394833, longitude: 128.3545733 },
+        { title: 'POST 4', body: 'CONTENT 4', category_id: "ƒ´≈◊∞Ì∏Æ", price: 6000, latitude: 36.1494833, longitude: 128.3245733 },
+        { title: 'POST 5', body: 'CONTENT 5', category_id: "ƒ´≈◊∞Ì∏Æ", price: 7000, latitude: 36.1594833, longitude: 128.3645733 },
       ],
       setCarouselItem: {
-        postTitle: '', postContent: '', categoryId: "", price: 0, latitude: 0, longitude: 0,
+        title: '', body: '', category_id: "", price: 0, latitude: 0, longitude: 0,
       },
       currentBoundingBox: {
         NElatitude: 0, NElongitude: 0, SWlatitude: 0, SWlongitude: 0,
@@ -128,7 +125,7 @@ class Map extends React.Component<any, State> {
         //     this.locationCurrentPosition();
         // }
       }
-    };
+    }
   }
 
   componentDidMount() {
@@ -158,9 +155,9 @@ class Map extends React.Component<any, State> {
 
   ClickMovetoDetailScreen = () => {
     this.props.navigation.navigate('DetailPostScreen', {
-      postTitle: this.state.setCarouselItem.postTitle,
-      postContent: this.state.setCarouselItem.postContent,
-      categoryId: this.state.setCarouselItem.categoryId,
+      title: this.state.setCarouselItem.title,
+      body: this.state.setCarouselItem.body,
+      category_id: this.state.setCarouselItem.category_id,
       price: this.state.setCarouselItem.price,
     })}
 
@@ -182,10 +179,10 @@ class Map extends React.Component<any, State> {
     this.setState({
       setCarouselItem: {
         ...this.state.setCarouselItem,
-        postTitle: location.postTitle,
-        postContent: location.postContent,
+        title: location.title,
+        body: location.body,
         price: location.price,
-        categoryId: location.categoryId,
+        category_id: location.category_id,
         latitude: location.latitude,
         longitude: location.longitude,
       }
@@ -208,13 +205,12 @@ class Map extends React.Component<any, State> {
             showsUserLocation={true}
             zoomEnabled={true}
             zoomControlEnabled={true}
-
             onRegionChangeComplete={this.onRegionChangeComplete}
           >
             {
               this.state.coordinates.map((marker) => (
                 <Marker
-                  key={marker.postTitle}
+                  key={marker.title}
                   tracksViewChanges={false}
                   coordinate={{
                     latitude: marker.latitude,

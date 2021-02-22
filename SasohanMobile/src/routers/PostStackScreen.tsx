@@ -7,39 +7,41 @@
  */
 import PostScreen from '../screens/PostScreen';
 import WritePostScreen from '../screens/WritePostScreen';
+import DetailPostScreen from '../screens/DetailPostScreen';
+import SearchScreen from '../screens/SearchScreen'
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { Component } from 'react';
-import { Image, View, Button, Text, StyleSheet } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {StyleSheet } from 'react-native';
 
-const HomeStack = createStackNavigator();
+
+const PostStack = createStackNavigator();
 
 interface Props { navigation: any }
 interface State { }
 
 class PostStackScreen extends Component<Props, State> {
+    constructor(props: Props){
+        super(props)
+    }
+
+    
     render() {
         return (
-            <HomeStack.Navigator
+            <PostStack.Navigator
                 initialRouteName="PostScreen">
-                <HomeStack.Screen name="PostScreen"
+                <PostStack.Screen name="PostScreen"
                     component={PostScreen}
                     options={{
-                        headerRight: () => (
-                            <TouchableOpacity
-                                style={styles.writeBtn}
-                                onPress={() => this.props.navigation.navigate('WritePostScreen')}
-                            >
-                                <Text>게시물 작성</Text>
-                            </TouchableOpacity>
-                        ),
-                        headerStyle: {
-                            backgroundColor: 'white',
-                        },
-                        headerTintColor: 'white',
-                    }} />
-                <HomeStack.Screen name="WritePostScreen" component={WritePostScreen} />
-            </HomeStack.Navigator>
+                        headerShown: false
+                    }}/>
+                <PostStack.Screen name="WritePostScreen" component={WritePostScreen} />
+                <PostStack.Screen name="DetailPostScreen" component={DetailPostScreen} />
+                <PostStack.Screen name="SearchScreen" component={SearchScreen} 
+                    options={{
+                        headerShown: false
+                    }}
+                />
+            </PostStack.Navigator>
         )
     }
 }

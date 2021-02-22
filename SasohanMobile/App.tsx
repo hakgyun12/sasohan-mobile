@@ -6,12 +6,11 @@
  * @flow strict-local
  */
 import 'react-native-gesture-handler';
-import React, { Component, useEffect } from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
-import { NavigationContainer, StackActions } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { createStackNavigator } from '@react-navigation/stack';
+import React, { Component } from 'react';
+import { StyleSheet } from 'react-native';
+import { NavigationContainer} from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 import AllTabBottomStackScreen from './src/routers/AllTabBottomStackScreen';
 

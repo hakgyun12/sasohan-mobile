@@ -22,6 +22,7 @@
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-cluster-map": "^1.0.9",
+    "react-native-elements": "^3.2.0",
     "react-native-geolocation-service": "^5.1.1",
     "react-native-gesture-handler": "^1.10.0",
     "react-native-map-clustering": "^3.4.2",
@@ -32,10 +33,13 @@
     "react-native-reanimated": "^1.13.2",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-screens": "^2.17.1",
+    "react-native-search-filter": "^0.1.5",
     "react-native-simple-modal": "^9.0.1",
+    "react-native-simple-radio-button": "^2.7.4",
     "react-native-snap-carousel": "^3.9.1",
     "react-navigation": "^4.4.3",
-    "styled-components": "^5.2.1"
+    "styled-components": "^5.2.1",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.12.10",
@@ -43,6 +47,7 @@
     "@react-native-community/eslint-config": "1.1.0",
     "@types/node": "^14.14.22",
     "@types/react-native": "^0.63.46",
+    "@types/react-native-simple-radio-button": "^2.7.0",
     "@types/react-native-vector-icons": "^6.4.6",
     "@types/styled-components": "^5.1.7",
     "babel-jest": "25.5.1",
@@ -53,5 +58,10 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "rnpm": {
+    "assets": [
+      "./fonts"
+    ]
   }
 }
