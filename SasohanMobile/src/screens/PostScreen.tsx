@@ -111,7 +111,7 @@ class PostScreen extends React.Component<Props, State> {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View>
+                <View style={styles.scrollView}>
                   <ScrollView onMomentumScrollEnd={(e) => {
                     const scrollPosition = e.nativeEvent.contentOffset.y;
                     const scrollViewHeight = e.nativeEvent.layoutMeasurement.height;
@@ -191,6 +191,9 @@ const styles = StyleSheet.create({
   write: {
     width: 50,
     height: 50,
+  },
+  scrollView: {
+    marginBottom: 150,
   }
 })
 

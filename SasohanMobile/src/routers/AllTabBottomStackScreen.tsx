@@ -64,7 +64,8 @@ class AllTabBottomStackScreen extends Component {
                     tabBarLabel: route.name,
                     tabBarIcon: ({ focused }: { focused: any }) =>
                         TabBarIcon(focused, route.name),
-                })}>
+                })}
+            >
                 <Tab.Screen name="Post" component={PostStackScreen} />
                 <Tab.Screen
                     name="Home"

@@ -33,7 +33,9 @@ class PostStackScreen extends Component<Props, State> {
                     component={PostScreen}
                     options={{
                         headerShown: false
-                    }}/>
+
+                    }}
+                />
                 <PostStack.Screen name="WritePostScreen" component={WritePostScreen} />
                 <PostStack.Screen name="DetailPostScreen" component={DetailPostScreen} />
                 <PostStack.Screen name="SearchScreen" component={SearchScreen} 
