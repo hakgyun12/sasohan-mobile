@@ -13,7 +13,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import HomeScreen from './src/home';
 import UserScreen from './src/user';
-import SearchScreen from './src/search';
+import User from './src/signIn';
 import PostScreen from './src/post';
 
 const Tab = createBottomTabNavigator();
@@ -68,7 +68,7 @@ class App extends Component {
             tabBarIcon: ({focused}: {focused: any}) =>
               TabBarIcon(focused, route.name),
           })}>
-          <Tab.Screen name="Search" component={SearchScreen} />
+          <Tab.Screen name="Search" component={User} />
           <Tab.Screen name="Post" component={PostScreen} />
           <Tab.Screen name="Home" component={HomeScreen} />
           <Tab.Screen name="User" component={UserScreen} />

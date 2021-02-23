@@ -34,9 +34,6 @@ interface Props {
   route: any
 };
 
-
-
-
 export default class User extends React.Component<Props, State> {
   constructor(props: any) {
     super(props);
@@ -96,10 +93,12 @@ export default class User extends React.Component<Props, State> {
   render() {
     this.inputAge();
     const user_ide = this.props.route.params.user_ide;
+    const user_account_type = this.props.route.params.user_account_type;
     return (
       <View style={styles.container}>
       <Text style={styles.headerText}>닉네임 설정</Text>
       <Text style={styles.showText}>id: {user_ide}</Text>
+      <Text style={styles.showText}>type: {user_account_type}</Text>
       <Text style={styles.showText}>nickname: {this.state.user.nickname}</Text>
       <Text style={styles.showText}>성별: {this.state.user.gender}</Text>
       <Text style={styles.showText}>나이: {this.state.user.age}</Text>

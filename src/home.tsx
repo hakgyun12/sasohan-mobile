@@ -17,7 +17,8 @@ import Button from 'apsl-react-native-button'
 
 interface Profile {
   id: string,
-  profile_image_url: any
+  profile_image_url: any,
+  account_type: string
 }
 
 interface Token {
@@ -51,6 +52,7 @@ const TOKEN_EMPTY = {
 const PROFILE_EMPTY = {
   id: 'cannot fetched id',
   profile_image_url: '',
+  account_type: ''
 };
 
 export default class LoginScreen extends React.Component<any, State> {
@@ -116,10 +118,10 @@ export default class LoginScreen extends React.Component<any, State> {
 
     kakaoLogins.getProfile()
       .then(result => {
-        this.setState({idInfo: {...this.state.idInfo, profile: {id: result.id, profile_image_url: result.profile_image_url}}})
+        this.setState({idInfo: {...this.state.idInfo, profile: {id: result.id, profile_image_url: result.profile_image_url, account_type: 'kakao'}}})
         this.setState({loading: {...this.state.loading, profileLoading: false}})
         console.log(`Get Profile Finished:${JSON.stringify(result)}`);
-        this.props.navigation.navigate('Search', {user_ide: this.state.idInfo.profile.id});
+        this.props.navigation.navigate('Search', {user_ide: this.state.idInfo.profile.id, user_account_type: this.state.idInfo.profile.account_type});
       })
       .catch(err => {
         this.setState({loading: {...this.state.loading, profileLoading: false}})
@@ -148,7 +150,7 @@ export default class LoginScreen extends React.Component<any, State> {
       <View style={styles.container}>
       <View style={styles.profile}>
         <Image style={styles.profilePhoto} source={{uri: this.state.idInfo.profile.profile_image_url !== "" ? this.state.idInfo.profile.profile_image_url : undefined}} />
-        <Text>{`id : ${this.state.idInfo.profile.id}_kakao`}</Text>
+        <Text>{`id : ${this.state.idInfo.profile.id}`}</Text>
         <Text></Text>
       </View>
       <View style={styles.content}>
