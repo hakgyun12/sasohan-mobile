@@ -7,12 +7,12 @@
  */
 import 'react-native-gesture-handler';
 import React, { Component } from 'react';
-import { View, Text, Button, StyleSheet, Image } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 
 type item = {
-    postTitle: string;
-    postContent: string;
-    categoryId: string;
+    title: string;
+    body: string;
+    category_id: string;
     price: number;
     latitude: number;
     longitude: number;
@@ -36,12 +36,12 @@ class CarouselModel extends Component<Props> {
                    <View style={styles.cardHeader}>
                         <View>
                             <Text style={styles.cardTitle}>
-                                {this.props.item.postTitle}
+                                {this.props.item.title}
                             </Text>
                         </View>
                         <View>
                             <Text style={styles.cardCategory}>
-                                {this.props.item.categoryId}
+                                {this.props.item.category_id}
                             </Text>
                         </View>
                         <View style={styles.cardCloseBtn}>
@@ -50,11 +50,11 @@ class CarouselModel extends Component<Props> {
                     </View>
                     <View>
                         <Text style={styles.cardContent}>
-                            {this.props.item.postContent}
+                            {this.props.item.body}
                         </Text>
                     </View>
                     <View>
-                        <Button onPress={this.props.ClicktoMoveDetailScreen} title="ê²Œì‹œë¬¼ ì´ë™í•˜ê¸°"/>
+                        <Button onPress={this.props.ClicktoMoveDetailScreen} title="°Ô½Ã¹° ÀÌµ¿ÇÏ±â"/>
                     </View>
                 </View>
             </View>

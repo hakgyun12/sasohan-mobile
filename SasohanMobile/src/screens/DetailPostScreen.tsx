@@ -6,10 +6,8 @@
  * @flow strict-local
  */
 import 'react-native-gesture-handler';
-import MapScreen from '../screens/MapScreen'
 import React, { Component } from 'react';
-import { View, Text, Button, ScrollView, SafeAreaView, StyleSheet } from 'react-native';
-import { NavigationInjectedProps, withNavigation } from 'react-navigation';
+import { View, Text, SafeAreaView, StyleSheet } from 'react-native';
 
 interface Props { route: any }
 interface State { }
@@ -23,10 +21,12 @@ class DetailPostScreen extends Component<Props, State> {
         /**
          * Data to Show Posts
          */
-        const postTitle = this.props.route.params.postTitle
-        const postContent = this.props.route.params.postContent
-        const categoryId = this.props.route.params.categoryId
+        const title = this.props.route.params.title
+        const body = this.props.route.params.body
+        const category_id = this.props.route.params.category_id
         const price = this.props.route.params.price
+
+        console.log(title, body, category_id, price)
 
         return (
             <SafeAreaView>
@@ -34,17 +34,17 @@ class DetailPostScreen extends Component<Props, State> {
                     <View style={styles.postContainer}>
                         <View>
                             <Text style={styles.postTitle}>
-                                {postTitle}
+                                {title}
                             </Text>
                         </View>
                         <View>
                             <Text style={styles.postContent}>
-                                {postContent}
+                                {body}
                             </Text>
                         </View>
                         <View>
                             <Text style={styles.postCategory}>
-                                {categoryId}
+                                {category_id}
                             </Text>
                         </View>
                         <View>

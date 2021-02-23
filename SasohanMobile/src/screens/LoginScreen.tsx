@@ -7,7 +7,7 @@
  */
 import 'react-native-gesture-handler';
 import React, {Component} from 'react';
-import {View, Text, Button} from 'react-native';
+import {View, Text} from 'react-native';
 
 class LoginScreen extends Component {
   render() {

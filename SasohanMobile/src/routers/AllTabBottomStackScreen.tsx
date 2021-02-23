@@ -6,14 +6,12 @@
  * @flow strict-local
  */
 import 'react-native-gesture-handler';
-import React, { Component, useEffect } from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import React, { Component} from 'react';
+import { StyleSheet, Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import HomeStackScreen from './HomeStackScreen';
 import UserScreen from '../screens/UserScreen';
-import SearchScreen from '../screens/SearchScreen';
 import PostStackScreen from './PostStackScreen';
 
 const Tab = createBottomTabNavigator();
@@ -26,8 +24,6 @@ const TabBarIcon = (focused: any, name: any) => {
         iconImagePath = require('./../pics/user.png');
     } else if (name === 'Post') {
         iconImagePath = require('./../pics/post.png');
-    } else if (name === 'Search') {
-        iconImagePath = require('./../pics/search.png');
     }
 
     return (
@@ -55,10 +51,12 @@ class AllTabBottomStackScreen extends Component {
             <Tab.Navigator
                 initialRouteName="Home"
                 tabBarOptions={{
+                    keyboardHidesTabBar: true,
                     activeBackgroundColor: 'skyblue',
                     activeTintColor: 'blue',
                     inactiveTintColor: '#fff',
                     style: {
+                        position: 'absolute',
                         backgroundColor: '#c6cbef',
                     },
                 }}
@@ -66,8 +64,8 @@ class AllTabBottomStackScreen extends Component {
                     tabBarLabel: route.name,
                     tabBarIcon: ({ focused }: { focused: any }) =>
                         TabBarIcon(focused, route.name),
-                })}>
-                <Tab.Screen name="Search" component={SearchScreen} />
+                })}
+            >
                 <Tab.Screen name="Post" component={PostStackScreen} />
                 <Tab.Screen
                     name="Home"
