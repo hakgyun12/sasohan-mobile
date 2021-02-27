@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+import com.swmansion.reanimated.ReanimatedPackage;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
@@ -34,7 +36,9 @@ public class MainApplication extends Application implements ReactApplication {
       // example:
       // packages.add(new MyReactNativePackage());
       return Arrays.<ReactPackage>asList(new MainReactPackage(),
-            new MapsPackage(), new RNGestureHandlerPackage(),
+            new RNGestureHandlerPackage(),
+            new ReanimatedPackage(),
+            new MapsPackage(),
           new SafeAreaContextPackage(), new RNFusedLocationPackage());
     }
 

@@ -90,14 +90,14 @@ class PostScreen extends React.Component<Props, State> {
                 <View>
                     <View style = {{flexDirection: 'row'}}>
                         <Image 
-                          source={require('../pics/Logo.jpg')}
+                          source={require('../../assets/pics/Logo.jpg')}
                           style={styles.logo}
                         />
                         <TouchableOpacity
                           onPress={this.ClickMovetoSearchScreen}
                         >
                           <Image 
-                            source={require('../pics/search.png')}
+                            source={require('../../assets/pics/search.png')}
                             style={styles.search}
                           />
                         </TouchableOpacity>
@@ -105,7 +105,7 @@ class PostScreen extends React.Component<Props, State> {
                           onPress={this.ClickMovetoWriteScreen}
                         >
                           <Image
-                            source={require('../pics/write.png')}
+                            source={require('../../assets/pics/write.png')}
                             style={styles.write}
                           />
                         </TouchableOpacity>

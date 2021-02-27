@@ -54,7 +54,7 @@ class CarouselModel extends Component<Props> {
                         </Text>
                     </View>
                     <View>
-                        <Button onPress={this.props.ClicktoMoveDetailScreen} title="게시물 이동하기"/>
+                        <Button onPress={this.props.ClicktoMoveDetailScreen} title="Move to Post"/>
                     </View>
                 </View>
             </View>

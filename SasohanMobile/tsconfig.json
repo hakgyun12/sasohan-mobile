@@ -9,7 +9,7 @@
     "moduleResolution": "node",
     "noEmit": true,
     "strict": true,
-    "target": "es2015",
+    "target": "es2017",
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "charset": "utf8"

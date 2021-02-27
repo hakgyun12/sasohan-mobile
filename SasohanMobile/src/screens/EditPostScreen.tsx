@@ -15,7 +15,7 @@ interface State { }
 /**
  * Screen showing detailed posts
  */
-class DetailPostScreen extends Component<Props, State> {
+class EditPostScreen extends Component<Props, State> {
     constructor(props: any){
         super(props);
 
@@ -89,4 +89,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default DetailPostScreen;
+export default EditPostScreen;

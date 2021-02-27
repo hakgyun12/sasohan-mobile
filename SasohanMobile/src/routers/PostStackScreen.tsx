@@ -16,14 +16,8 @@ import {StyleSheet } from 'react-native';
 
 const PostStack = createStackNavigator();
 
-interface Props { navigation: any }
-interface State { }
 
-class PostStackScreen extends Component<Props, State> {
-    constructor(props: Props){
-        super(props)
-    }
-
+class PostStackScreen extends Component {
     
     render() {
         return (

@@ -16,6 +16,10 @@ target 'SasohanMobile' do
 
   pod 'react-native-maps', :path => '../node_modules/react-native-maps'
 
+  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
+
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
   target 'SasohanMobileTests' do
     inherit! :complete
     # Pods for testing

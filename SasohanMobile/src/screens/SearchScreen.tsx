@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Text,
-  Alert,
 } from "react-native";
 
 import SearchInput, { createFilter } from 'react-native-search-filter';
@@ -52,9 +51,7 @@ class SearchScreen extends Component<Props, State> {
       })
     }
 
-    /* 
-    * 해당 게시물 클릭했을 때 넘어가는 거 index가 아닌 게시물 data로 넘겨서 받아야 함.
-    */
+    
     render() {
       const filteredPosts = postList.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS))
       return (

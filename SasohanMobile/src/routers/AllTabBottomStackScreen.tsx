@@ -11,7 +11,7 @@ import { StyleSheet, Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import HomeStackScreen from './HomeStackScreen';
-import UserScreen from '../screens/UserScreen';
+import UserStackScreen from './UserStackScreen';
 import PostStackScreen from './PostStackScreen';
 
 const Tab = createBottomTabNavigator();
@@ -19,11 +19,11 @@ const TabBarIcon = (focused: any, name: any) => {
     let iconImagePath;
 
     if (name === 'Home') {
-        iconImagePath = require('./../pics/home.png');
+        iconImagePath = require('../../assets/pics/home.png');
     } else if (name === 'User') {
-        iconImagePath = require('./../pics/user.png');
+        iconImagePath = require('../../assets/pics/user.png');
     } else if (name === 'Post') {
-        iconImagePath = require('./../pics/post.png');
+        iconImagePath = require('../../assets/pics/post.png');
     }
 
     return (
@@ -71,7 +71,7 @@ class AllTabBottomStackScreen extends Component {
                     name="Home"
                     component={HomeStackScreen}
                 />
-                <Tab.Screen name="User" component={UserScreen} />
+                <Tab.Screen name="User" component={UserStackScreen} />
             </Tab.Navigator>
 
         );

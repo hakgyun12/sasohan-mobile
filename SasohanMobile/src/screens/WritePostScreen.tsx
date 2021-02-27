@@ -10,7 +10,6 @@ import React, { Component } from 'react';
 import { View, Text, Button, StyleSheet, Dimensions, Alert, ScrollView, TextInput } from 'react-native';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
-
 const category_props = [
     {label: 'Housework', value: 0},
     {label: 'Errands', value: 1},
@@ -41,12 +40,12 @@ class WritePostScreen extends Component {
 
     clickSaveBtn = () => {
         const chkTitle = function(str: string) {
-            var regNm = /^[0-9a-zA-Z°¡-ÆR]{2, 20}$/; 
+            var regNm = /^[0-9a-zA-Z]{2, 20}$/; 
             return regNm.test(str) ? true : false;
         };
 
         const chkContent = function(str: string) {
-            var regNm = /^[0-9a-zA-Z°¡-ÆR]{2, 40}$/; 
+            var regNm = /^[0-9a-zA-Z]{2, 40}$/; 
             return regNm.test(str) ? true : false;
         }
 
@@ -65,16 +64,29 @@ class WritePostScreen extends Component {
             }
         }
 
+        /**
+         * 1. Á¦¸ñ À¯È¿¼º °Ë»ç
+         * 2. ³»¿ë À¯È¿¼º °Ë»ç
+         * 3. °¡°Ý À¯È¿¼º °Ë»ç
+         * 4. Ä«Å×°í¸® À¯È¿¼º °Ë»ç
+         * 5. 1~4 Ç×¸ñ True -> DB ÀúÀå, match ¾Ë°í¸®Áò
+         */
         if(chkTitle(this.state.postTitle) == false){
-            Alert.alert("check 1");
+            Alert.alert("Title is false");
         }else if(chkContent(this.state.postContent) == false){
-            Alert.alert("check 2");
+            Alert.alert("Content is false");
         }else if(chkPrice(this.state.postPrice.toString()) == false) {
-            Alert.alert("check 3");
+            Alert.alert("Price is false");
         }else if(chkCategory(this.state.postCategory) == false){
-            Alert.alert("checked Category");
+            Alert.alert("Category is false");
         }else{
-            Alert.alert("Put it into the relevant content database.");
+            const rws = new WebSocket("ws://{server_domain}:1324/connect");
+
+            //¼ÒÄÏ ¿¬°á ½Ã ¼­¹ö¿¡ id ¸Þ½ÃÁö Àü¼Û
+            rws.onopen = () => {
+                rws.send('id')
+            }
+
         }
     }
 
@@ -88,7 +100,7 @@ class WritePostScreen extends Component {
                                 <Text>Post title</Text>
                             </View>
                             <View>
-                                <TextInput placeholder="2±ÛÀÚ" style={styles.titleInput} onChangeText= {(text) => this.titleHandleText(text)}/>
+                                <TextInput placeholder="Enter at least 2 maximum 20" style={styles.titleInput} onChangeText= {(text) => this.titleHandleText(text)}/>
                             </View>
                             <View>
                                 <Text>title checked : {this.state.postTitle}</Text>
@@ -99,7 +111,7 @@ class WritePostScreen extends Component {
                                 <Text>Post Content </Text>
                             </View>
                             <View>
-                                <TextInput placeholder="2±ÛÀÚ" style={styles.contentInput} onChangeText= {(text) => this.contentHandleText(text)}/>
+                                <TextInput placeholder="Enter at least 2 maximum 40" style={styles.contentInput} onChangeText= {(text) => this.contentHandleText(text)}/>
                             </View>
                             <View>
                                 <Text>content checked : {this.state.postContent}</Text>
@@ -155,7 +167,7 @@ class WritePostScreen extends Component {
                         </View>
                         <View>
                             <View>
-                                <Button title="????" onPress={() => this.clickSaveBtn()}/>
+                                <Button title="Save" onPress={() => this.clickSaveBtn()}/>
                             </View>
                         </View>
                     </View>

@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import CarouselModel from '../model/CarouselModel';
+import CarouselModel from '../components/Carousel';
 
 type currentPositionProps = {
   latitude: number;
@@ -58,11 +58,11 @@ class Map extends Component<any, State> {
         longitudeDelta: 0,
       },
       coordinates: [
-        { title: 'POST 1', body: 'CONTENT 1', category_id: "카테고리", price: 3000, latitude: 36.1294833, longitude: 128.3445733 },
-        { title: 'POST 2', body: 'CONTENT 2', category_id: "카테고리", price: 4000, latitude: 36.1094833, longitude: 128.3345733 },
-        { title: 'POST 3', body: 'CONTENT 3', category_id: "카테고리", price: 5000, latitude: 36.1394833, longitude: 128.3545733 },
-        { title: 'POST 4', body: 'CONTENT 4', category_id: "카테고리", price: 6000, latitude: 36.1494833, longitude: 128.3245733 },
-        { title: 'POST 5', body: 'CONTENT 5', category_id: "카테고리", price: 7000, latitude: 36.1594833, longitude: 128.3645733 },
+        { title: 'POST 1', body: 'CONTENT 1', category_id: "Category", price: 3000, latitude: 36.1294833, longitude: 128.3445733 },
+        { title: 'POST 2', body: 'CONTENT 2', category_id: "Category", price: 4000, latitude: 36.1094833, longitude: 128.3345733 },
+        { title: 'POST 3', body: 'CONTENT 3', category_id: "Category", price: 5000, latitude: 36.1394833, longitude: 128.3545733 },
+        { title: 'POST 4', body: 'CONTENT 4', category_id: "Category", price: 6000, latitude: 36.1494833, longitude: 128.3245733 },
+        { title: 'POST 5', body: 'CONTENT 5', category_id: "Category", price: 7000, latitude: 36.1594833, longitude: 128.3645733 },
       ],
       setCarouselItem: {
         title: '', body: '', category_id: "", price: 0, latitude: 0, longitude: 0,
@@ -76,7 +76,6 @@ class Map extends Component<any, State> {
    * Obtain permission to check the user's device and obtain the location accordingly.
    */
   requestLocationPermission = async () => {
-
     //if user device is Android
     if (Platform.OS === 'android') {
       const response = await PermissionsAndroid.request(
@@ -222,7 +221,7 @@ class Map extends Component<any, State> {
           </MapView>
         </View>
         {this.state.isShowingCarousel &&
-        <View style={{position: 'absolute', bottom: 10}}>
+        <View style={{position: 'absolute', marginLeft: 40, marginTop: 500}}>
           <CarouselModel
             item={this.state.setCarouselItem}
             hideCarousel={this.hideCarousel}
