@@ -13,7 +13,8 @@ import {
   StyleSheet,
   ScrollView,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  RefreshControl
 } from 'react-native';
 
 import postList from '../../postList.json';
@@ -35,6 +36,7 @@ type State = {
     data: any,
     itemToRender: number;
     setPostItems: PostProps;
+    refreshing: boolean,
 }
 
 class PostScreen extends React.Component<Props, State> {
@@ -44,10 +46,27 @@ class PostScreen extends React.Component<Props, State> {
         this.state = {
             data: postList,
             itemToRender: 10,
+            refreshing: false,
             setPostItems: {
               title: "", body: "", category_id: "", price: 0,
             }
         }
+    }
+
+    fetchData = async () => {
+      const url=  ""
+
+      fetch(url)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          data: responseJson.book_array,
+          refreshing: false
+        });
+      })
+      .catch((error) => {
+        console.log(error)
+      })
     }
 
     ClickMovetoWriteScreen = () => {
@@ -66,8 +85,16 @@ class PostScreen extends React.Component<Props, State> {
           price: this.state.data[index].post.price,
         })
     }
-      
+
+    onRefresh = () => {
+      this.setState({
+        refreshing: true
+      });
+      this.fetchData()
+    }
+
     render() {
+      
         const items = this.state.data.map((item: any, index: number) => {
             if (index+1 <= this.state.itemToRender){
               return (
@@ -112,7 +139,14 @@ class PostScreen extends React.Component<Props, State> {
                     </View>
                 </View>
                 <View style={styles.scrollView}>
-                  <ScrollView onMomentumScrollEnd={(e) => {
+                  <ScrollView 
+                    refreshControl={
+                      <RefreshControl
+                        onRefresh={this.onRefresh}
+                        refreshing={this.state.refreshing}
+                      />
+                    }
+                    onMomentumScrollEnd={(e) => {
                     const scrollPosition = e.nativeEvent.contentOffset.y;
                     const scrollViewHeight = e.nativeEvent.layoutMeasurement.height;
                     const contentHeight = e.nativeEvent.contentSize.height;

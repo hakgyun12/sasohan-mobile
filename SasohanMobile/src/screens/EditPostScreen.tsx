@@ -5,88 +5,250 @@
  * @format
  * @flow strict-local
  */
-import 'react-native-gesture-handler';
+
 import React, { Component } from 'react';
-import { View, Text, SafeAreaView, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, Dimensions, Alert, ScrollView, TextInput } from 'react-native';
+import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
-interface Props { route: any }
-interface State { }
+type Props = {
+    route: any
+}
 
-/**
- * Screen showing detailed posts
- */
+type State = {
+    postTitle: string,
+    postContent: string,
+    postPrice: number,
+    postCategory: string,
+}
+
+const category_props = [
+    {label: 'Housework', value: 0},
+    {label: 'Errands', value: 1},
+    {label: 'Housework', value: 2},
+    {label: 'Put In/Repair', value: 3},
+    {label: 'Other', value: 4},       
+]
+
 class EditPostScreen extends Component<Props, State> {
     constructor(props: any){
         super(props);
 
         this.state = {
-            
+            postTitle: "",
+            postContent: "",
+            postPrice: 0,
+            postCategory: "",
+        }
+    }
+
+    titleHandleText = (text: string) => {
+        this.setState({ postTitle: text });
+    }
+
+    contentHandleText = (text: string) => {
+        this.setState({ postContent: text });
+    }
+
+    priceHandleText = (price: string) => {
+        this.setState({ postPrice: parseInt(price, 10) });
+    }
+
+    clickSaveBtn = () => {
+        const chkTitle = function(str: string) {
+            var regNm = /^[0-9a-zA-Z]{2, 20}$/; 
+            return regNm.test(str) ? true : false;
+        };
+
+        const chkContent = function(str: string) {
+            var regNm = /^[0-9a-zA-Z]{2, 40}$/; 
+            return regNm.test(str) ? true : false;
+        }
+
+        const chkPrice = function(int: string) {
+            var regExp = /^[0-9]+$/;
+            return regExp.test(int) ? true : false;
+        }
+
+        const chkCategory = function(str: string) {
+            for(var i = 0; i< 4;){
+                if(str === category_props[i].label){
+                    i++;
+                }else{
+                    return false;
+                }
+            }
+        }
+
+        /**
+         * 1. 제목 유효성 검사
+         * 2. 내용 유효성 검사
+         * 3. 가격 유효성 검사
+         * 4. 카테고리 유효성 검사
+         * 5. 1~4 항목 True -> DB 저장, match 알고리즘
+         */
+        if(chkTitle(this.state.postTitle) == false){
+            Alert.alert("Title is false");
+        }else if(chkContent(this.state.postContent) == false){
+            Alert.alert("Content is false");
+        }else if(chkPrice(this.state.postPrice.toString()) == false) {
+            Alert.alert("Price is false");
+        }else if(chkCategory(this.state.postCategory) == false){
+            Alert.alert("Category is false");
+        }else{
+            /**
+             * WebSocket은 Login이 끝난 후에 연결
+             */
+            const rws = new WebSocket("ws://{server_domain}:1324/connect");
+
+            //소켓 연결 시 서버에 id 메시지 전송
+            rws.onopen = () => {
+                rws.send('id')
+            }
+
         }
     }
 
     render() {
-        /**
-         * Data to Show Posts
-         */
-        const title = this.props.route.params.title
-        const body = this.props.route.params.body
-        const category_id = this.props.route.params.category_id
-        const price = this.props.route.params.price
-
-        console.log(title, body, category_id, price)
-
+        const title = this.props.route.book_title
+        const content = this.props.route.author
         return (
-            <SafeAreaView>
-                <View style={styles.container}>
-                    <View style={styles.postContainer}>
-                        <View>
-                            <Text style={styles.postTitle}>
-                                {title}
-                            </Text>
+            <View style={styles.writeContainer}>
+                <ScrollView>
+                    <View>
+                        <View style={styles.titleInputContainer}>
+                            <View>
+                                <Text>{title}</Text>
+                            </View>
+                            <View>
+                                <TextInput placeholder="Enter at least 2 maximum 20" style={styles.titleInput} onChangeText= {(text) => this.titleHandleText(text)}/>
+                            </View>
+                            <View>
+                                <Text>title checked : {this.state.postTitle}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.contentInputContainer}>
+                            <View>
+                                <Text>{content}</Text>
+                            </View>
+                            <View>
+                                <TextInput placeholder="Enter at least 2 maximum 40" style={styles.contentInput} onChangeText= {(text) => this.contentHandleText(text)}/>
+                            </View>
+                            <View>
+                                <Text>content checked : {this.state.postContent}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.priceInputContainer}>
+                            <View>
+                                <Text>Post Price</Text>
+                            </View>
+                            <View>
+                                <TextInput style={styles.priceInput} onChangeText= {(price) => this.priceHandleText(price)}/>
+                            </View>
+                            <View>
+                                <Text>price checked : {this.state.postPrice}</Text>
+                            </View>
                         </View>
                         <View>
-                            <Text style={styles.postContent}>
-                                {body}
-                            </Text>
+                            <View style={styles.categoryContainer}>
+                                <RadioForm 
+                                    initial={0}
+                                    animation={true}
+                                >
+                                        {
+                                            category_props.map((obj, i) => (
+                                            <RadioButton labelHorizontal={true} key={i}
+                                                selectedButtonColor={'#ffffff'} >
+                                                <RadioButtonInput
+                                                    obj={obj}
+                                                    index={i}
+                                                    onPress={() => this.setState({postCategory: category_props[i].label})}
+                                                    buttonInnerColor={'#ffffff'}
+                                                    buttonOuterColor={'#874c3c'}
+                                                    buttonSize={15}
+                                                    buttonStyle={{}}
+                                                    buttonWrapStyle={{marginLeft: 10}}
+                                                />
+                                                <RadioButtonLabel
+                                                    obj={obj}
+                                                    index={i}
+                                                    labelHorizontal={true}
+                                                    onPress={() => this.setState({postCategory: category_props[i].label})}
+                                                    labelStyle={{fontSize: 20, color: '#2ecc71'}}
+                                                    labelWrapStyle={{}}
+                                                />
+                                            </RadioButton>
+                                            ))
+                                        }  
+                                </RadioForm>
+                            </View>
+                            <View>
+                                <Text>category checked: {this.state.postCategory}</Text>
+                            </View>
                         </View>
                         <View>
-                            <Text style={styles.postCategory}>
-                                {category_id}
-                            </Text>
-                        </View>
-                        <View>
-                            <Text style={styles.postPrice}>
-                                {price}
-                            </Text>
+                            <View>
+                                <Button title="Save" onPress={() => this.clickSaveBtn()}/>
+                            </View>
                         </View>
                     </View>
-                </View>
-            </SafeAreaView>
+                </ScrollView>
+            </View>
         );
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        padding: 50,
+const {width, height} = Dimensions.get("screen");
+
+const styles= StyleSheet.create({
+    writeContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
     },
-    postContainer: {
+    titleInputContainer: {
+        marginHorizontal: 30,
+    },
+    titleInput: {
+        borderColor: "black",
+        borderWidth: 1,
+        width: width / 1.3,
         padding: 10,
     },
-    postTitle: {
-        fontSize: 50,
-        color: 'black',
+    contentInputContainer: {
+        marginHorizontal: 30,
     },
-    postContent: {
-        fontSize: 40,
-        color: 'black',
+    contentInput: {
+        borderColor: "black",
+        borderWidth: 1,
+        width: width / 1.3,
+        height: height / 7,
+        padding: 10,
     },
-    postCategory: {
-        fontSize: 20,
+    priceInputContainer: {
+        marginHorizontal: 30,
     },
-    postPrice: {
-        fontSize: 20,
+    priceInput: {
+        borderColor: "black",
+        borderWidth: 1,
+        width: width / 1.3,
+        padding: 10,
+    },
+    categoryContainer: {
+        flexDirection: "row",
+        marginVertical: 20,
+        marginHorizontal: 100,
+    },
+    categoryBtn: {
+        padding: 10,
+        marginHorizontal: 10,
+        backgroundColor: "rgba(81,135,200,1)",
+        width: 80,
+        height: 80,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 50,
     }
+
 })
 
 export default EditPostScreen;

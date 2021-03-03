@@ -34,30 +34,34 @@ class UserScreen extends Component<Props, State> {
       postData: [
         {title: 'View my posts', key: 'isWritten'},
         {title: 'View posts that I have solved', key: 'isSolved'},
-        {title: 'View posts that I have not solved', key: 'isNotSolved'}
+        {title: 'View posts that I have not solved', key: 'isNotSolved'},
       ]
     }
   }
 
   componentDidMount = () => {
-    const url = 'http://localhost:3000/user/testid'
+    // const url = 'http://localhost:3000/user/testid'
 
-    fetch(url)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      this.setState({
-        userData: responseJson.user
-      });
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-}
+    // fetch(url)
+    // .then((response) => response.json())
+    // .then((responseJson) => {
+    //   this.setState({
+    //     userData: responseJson.user
+    //   });
+    // })
+    // .catch((error) => {
+    //   console.log(error)
+    // })
+  }
 
   ClicktoUserPostScreen = ({item}: {item: any}) => {
     this.props.navigation.navigate('UserPostScreen', {
       key: item.key
     })
+  }
+
+  Logout = ({item}: {item: any}) => {
+
   }
 
   /**
@@ -125,9 +129,12 @@ class UserScreen extends Component<Props, State> {
           }
           </View>
           <View>
-            <TouchableOpacity>
-              <Icon name="setting" color="#777777" size={25} />
-              <Text style={styles.menuItem} key="setting">setting</Text>
+            <TouchableOpacity
+              onPress={(item) => this.Logout({item})}
+              style={styles.menuItem}       
+            >
+              <Icon name="post" color="#777777" size={25} />
+              <Text style={styles.menuItemText} key="setting">Logout</Text>
             </TouchableOpacity>
           </View>
         </View>

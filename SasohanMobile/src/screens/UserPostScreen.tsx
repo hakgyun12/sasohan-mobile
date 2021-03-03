@@ -7,7 +7,7 @@
  */
 import 'react-native-gesture-handler';
 import React, {Component} from 'react';
-import {View, StyleSheet, FlatList, Text, Image, ActivityIndicator, TouchableOpacity, Modal} from 'react-native';
+import {View, StyleSheet, FlatList, Text, Image, ActivityIndicator, TouchableOpacity, Modal, Alert, TextInput} from 'react-native';
 
 type Props = {
   navigation: any
@@ -20,7 +20,8 @@ type State = {
   isWritten: boolean,
   isSolved: boolean,
   isNotSolved: boolean,
-  isShowingModal: boolean,
+  isShowingReviewModal: boolean,
+  isShowingDeleteModal: boolean,
 }
 
 class UserPostScreen extends Component<Props, State> {
@@ -33,7 +34,8 @@ class UserPostScreen extends Component<Props, State> {
       isWritten: false,
       isSolved: false,
       isNotSolved: false,
-      isShowingModal: false,
+      isShowingReviewModal: false,
+      isShowingDeleteModal: false,
     }
   }
 
@@ -82,6 +84,14 @@ class UserPostScreen extends Component<Props, State> {
     })
   }
 
+  ClicktoEditScreen = ({item}: {item: any}) => {
+    this.props.navigation.navigate('EditPostScreen', {
+      title: item.book_title,
+      author: item.author
+    })
+  }
+
+
   renderItem = ({ item }: { item: any}) => {
     return(
       <TouchableOpacity style={{ flex: 1, flexDirection: 'row'}}
@@ -99,35 +109,52 @@ class UserPostScreen extends Component<Props, State> {
           </Text>
           <View style={{alignItems: 'flex-end'}}>
             {this.state.isWritten &&
-              <View style={{flexDirection: 'row',}}>
-                <TouchableOpacity style={{marginRight: 5}}>
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity style={{marginRight: 5}}
+                  onPress={() => this.ClicktoEditScreen({item})}
+                  key={item.author}
+                >
                   <Text>Edit</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{marginRight: 5}}>
+                <TouchableOpacity style={{marginRight: 5}}
+                  onPress={() => this.setState({
+                    isShowingDeleteModal: true,
+                  })}
+                >
                   <Text>Delete</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={{marginRight: 5}}
                   onPress={() => this.setState({
-                    isShowingModal: true
+                    isShowingReviewModal: true,
                   })}
+                  key={item.book_title}
                 >
                   <Text>Review</Text>
                 </TouchableOpacity>
               </View>
             }
             {this.state.isSolved &&
-              <View>
-                <TouchableOpacity style={{marginRight: 5}}>
-                  <Text>Delete</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity style={{marginRight: 5}}
+                onPress={() => this.setState({
+                  isShowingDeleteModal: true,
+                })}
+              >
+                <Text>Delete</Text>
+              </TouchableOpacity>
             }
             {this.state.isNotSolved &&
               <View style={{flexDirection: 'row'}}>
-                <TouchableOpacity style={{marginRight: 5}}>
+                <TouchableOpacity style={{marginRight: 5}}
+                  onPress={() => this.ClicktoEditScreen({item})}
+                  key={item.author}
+                >
                   <Text>Edit</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{marginRight: 5}}>
+                <TouchableOpacity style={{marginRight: 5}}
+                  onPress={() => this.setState({
+                    isShowingDeleteModal: true,
+                  })}
+                >
                   <Text>Delete</Text>
                 </TouchableOpacity>
               </View>
@@ -174,16 +201,69 @@ class UserPostScreen extends Component<Props, State> {
             ItemSeparatorComponent={this.renderSeparator}
           />
         </View>
-        <View style={{backgroundColor:'#000000aa'}}>
+        <View style={{justifyContent: 'center', alignContent: 'center'}}>
           <Modal
               animationType="slide"
-              visible={this.state.isShowingModal}
+              visible={this.state.isShowingReviewModal}
               transparent={true}
               onRequestClose={() => console.warn("close")}
           >
-              <View style={{ height: "30", width: "70", backgroundColor : "white"}}>
-                  <Text> Hello </Text> 
+              <View style={{backgroundColor : "#000000aa"}}>
+                <View style={styles.reviewHandle}>
+                  <View >
+                    <TextInput
+                      placeholder="write Review"
+                      style={styles.reviewInput}
+                    />
+                  </View>
+                  <View style={{ flexDirection: 'row', marginLeft: 40, marginTop: 30}}>
+                    <TouchableOpacity
+                      style={{flex: 1,}}
+                      onPress={() => this.setState({
+                        isShowingReviewModal: false,
+                      })}
+                    >
+                      <Text>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{flex: 1, marginLeft: 20,}}
+                    >
+                      <Text>Save</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>  
               </View>
+          </Modal>
+        </View>
+        <View style={{justifyContent: 'center', alignContent: 'center'}}>
+          <Modal
+              animationType="slide"
+              visible={this.state.isShowingDeleteModal}
+              transparent={true}
+              onRequestClose={() => console.warn("close")}
+          >
+            <View style={{backgroundColor:"#000000aa"}}>
+              <View style={styles.deleteHandle}>
+                <View>
+                  <Text style={{fontSize: 20}}> Are you sure you want to delete it? </Text>
+                </View>
+                <View style={{ flexDirection: 'row', marginLeft: 40, marginTop: 30}}>
+                  <TouchableOpacity
+                    style={{ flex: 1 }}
+                    onPress={() => this.setState({
+                      isShowingDeleteModal: false,
+                    })}
+                  >
+                    <Text>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{ flex: 1, marginLeft: 20 }}
+                  >
+                    <Text>Save</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
           </Modal>
         </View>
       </View>
@@ -217,6 +297,26 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#00000040',
     marginBottom: 10,
+  },
+  reviewHandle: {
+    backgroundColor : "#ffffff",
+    margin: 50,
+    padding: 40, 
+    borderRadius: 10,
+    height: 400
+  },
+  reviewInput: {
+    borderColor: 'black',
+    borderWidth: 1,
+    padding: 20,
+    height: 300,
+  },
+  deleteHandle: {
+    backgroundColor : "#ffffff",
+    margin: 50,
+    padding: 40, 
+    borderRadius: 10,
+    height: 150
   }
 })
 export default UserPostScreen;
